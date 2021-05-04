@@ -151,4 +151,16 @@ public class UtilityProvider {
         }
         return true;
     }
+
+    /**
+     * Validate the Pincode
+     *
+     * @param pincode Pincode
+     * @return true or false
+     */
+    public boolean checkIfPincodeIsValid(String pincode) {
+        Pattern p = Pattern.compile("\\d{6}\\b");
+        Matcher m = p.matcher(pincode);
+        return (m.find() && m.group().equals(pincode));
+    }
 }

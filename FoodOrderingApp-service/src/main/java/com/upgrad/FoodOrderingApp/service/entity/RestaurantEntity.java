@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Restaurant Entity representing the 'restaurant' table in the 'restaurantdb' database.
@@ -55,6 +57,34 @@ public class RestaurantEntity implements Serializable {
     @JoinColumn(name = "address_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AddressEntity address;
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_category", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<CategoryEntity> categories = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurant_item", joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<ItemEntity> items = new ArrayList<>();
+
+    public List<ItemEntity> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemEntity> items) {
+        this.items = items;
+    }
+
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
+    }
 
     public Integer getId() {
         return id;

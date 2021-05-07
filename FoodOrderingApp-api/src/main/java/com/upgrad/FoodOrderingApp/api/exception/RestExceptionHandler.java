@@ -63,7 +63,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(InvalidRatingException.class)
     public ResponseEntity<ErrorResponse> invalidRatingException(InvalidRatingException exc, WebRequest request){
-        return new ResponseEntity<ErrorResponse>(
+        return new ResponseEntity<>(
                 new ErrorResponse().code(exc.getCode()).message(exc.getErrorMessage()), HttpStatus.BAD_REQUEST
         );
     }
@@ -83,5 +83,42 @@ public class RestExceptionHandler {
                 .message(exc.getErrorMessage()),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(CouponNotFoundException.class)
+    public ResponseEntity<ErrorResponse> invalidCouponException(CouponNotFoundException e,WebRequest webRequest){
+
+        final ErrorResponse errorResponse = new ErrorResponse().
+                code(e.getCode()).
+                message(e.getErrorMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+
+
+    }
+
+    @ExceptionHandler(PaymentMethodNotFoundException.class)
+    public ResponseEntity<ErrorResponse> invalidPaymentMethodException(PaymentMethodNotFoundException e,WebRequest webRequest){
+
+        final ErrorResponse errorResponse = new ErrorResponse().
+                code(e.getCode()).
+                message(e.getErrorMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+
+    }
+
+
+
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> itemNotFoundException(ItemNotFoundException e,WebRequest webRequest){
+
+        final ErrorResponse errorResponse = new ErrorResponse().
+                code(e.getCode()).
+                message(e.getErrorMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+
+    }
+
+
+
+
 
 }

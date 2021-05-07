@@ -6,6 +6,7 @@ import com.upgrad.FoodOrderingApp.service.entity.*;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,8 +55,8 @@ public class AddressService {
             throw new SaveAddressException("SAR-002", "Invalid pincode");
         }
         addressEntity.setState(stateEntity);
-        AddressEntity savedAddress = addressDao.saveAddress(addressEntity);
-        return savedAddress;
+        return addressDao.saveAddress(addressEntity);
+
     }
 
     /**
@@ -69,9 +70,8 @@ public class AddressService {
 
         List<CustomerAddressEntity> customerAddressEntities = customerAddressDao.getAllCustomerAddressByCustomer(customerEntity);
         if (customerAddressEntities != null) {
-            customerAddressEntities.forEach(customerAddressEntity -> {
-                addressEntities.add(customerAddressEntity.getAddress());
-            });
+            customerAddressEntities.forEach(customerAddressEntity ->
+                    addressEntities.add(customerAddressEntity.getAddress()));
         }
         return addressEntities;
     }
@@ -104,8 +104,8 @@ public class AddressService {
         customerAddressEntity.setCustomer(customerEntity);
         customerAddressEntity.setAddress(addressEntity);
 
-        CustomerAddressEntity createdCustomerAddressEntity = customerAddressDao.saveCustomerAddress(customerAddressEntity);
-        return createdCustomerAddressEntity;
+        return customerAddressDao.saveCustomerAddress(customerAddressEntity);
+
     }
 
     /**
@@ -117,8 +117,10 @@ public class AddressService {
      * @throws AuthorizationFailedException Authorization Failed Exception
      * @throws AddressNotFoundException     Address Not Found Exception
      */
+
+    @Transactional(propagation = Propagation.REQUIRED)
     public AddressEntity getAddressByUUID(String addressUuid, CustomerEntity customerEntity) throws AuthorizationFailedException, AddressNotFoundException {
-        if (addressUuid == null) {
+        if (StringUtils.isEmpty(addressUuid)) {
             throw new AddressNotFoundException("ANF-005", "Address id can not be empty");
         }
 
@@ -129,11 +131,12 @@ public class AddressService {
 
         CustomerAddressEntity customerAddressEntity = customerAddressDao.getCustomerAddressByAddress(addressEntity);
 
-        if (customerAddressEntity.getCustomer().getUuid() == customerEntity.getUuid()) {
-            return addressEntity;
-        } else {
+        if (customerAddressEntity == null ||
+                !customerAddressEntity.getCustomer().getUuid().equals(customerEntity.getUuid()))
             throw new AuthorizationFailedException("ATHR-004", "You are not authorized to view/update/delete any one else's address");
-        }
+
+        return addressEntity;
+
     }
 
     /**
@@ -142,8 +145,8 @@ public class AddressService {
      * @return StateEntity
      */
     public List<StateEntity> getAllStates() {
-        List<StateEntity> stateEntities = stateDao.getAllStates();
-        return stateEntities;
+        return stateDao.getAllStates();
+
     }
 
     /**
@@ -157,12 +160,12 @@ public class AddressService {
         List<OrdersEntity> ordersEntities = orderDao.getOrdersByAddress(addressEntity);
 
         if (ordersEntities == null || ordersEntities.isEmpty()) {
-            AddressEntity deletedAddressEntity = addressDao.deleteAddress(addressEntity);
-            return deletedAddressEntity;
+            return addressDao.deleteAddress(addressEntity);
+
         } else {
             addressEntity.setActive(0);
-            AddressEntity updatedAddressActiveStatus = addressDao.updateAddressActiveStatus(addressEntity);
-            return updatedAddressActiveStatus;
+            return addressDao.updateAddressActiveStatus(addressEntity);
+
         }
     }
 }

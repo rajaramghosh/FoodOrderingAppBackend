@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,8 +25,9 @@ public class PaymentDao {
      */
     public PaymentEntity getPaymentByUUID(String paymentId) {
         try {
-            PaymentEntity paymentEntity = entityManager.createNamedQuery("getPaymentByUUID", PaymentEntity.class).setParameter("uuid", paymentId).getSingleResult();
-            return paymentEntity;
+            return entityManager.createNamedQuery("getPaymentByUUID", PaymentEntity.class).
+                    setParameter("uuid", paymentId).getSingleResult();
+
         } catch (NoResultException nre) {
             return null;
         }
@@ -38,10 +40,11 @@ public class PaymentDao {
      */
     public List<PaymentEntity> getAllPaymentMethods() {
         try {
-            List<PaymentEntity> paymentEntities = entityManager.createNamedQuery("getAllPaymentMethods", PaymentEntity.class).getResultList();
-            return paymentEntities;
+            return entityManager.createNamedQuery("getAllPaymentMethods", PaymentEntity.class).
+                    getResultList();
+
         } catch (NoResultException nre) {
-            return null;
+            return new ArrayList<>();
         }
     }
 }

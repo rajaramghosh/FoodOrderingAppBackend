@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.upgrad.FoodOrderingApp.api.util.Constants.*;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -42,7 +44,7 @@ public class CustomerController {
      * @throws SignUpRestrictedException Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, path = "/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupCustomerResponse> signUpCustomer(@RequestBody(required = false) final SignupCustomerRequest signupCustomerRequest) throws SignUpRestrictedException {
         CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setFirstName(signupCustomerRequest.getFirstName());
@@ -64,16 +66,16 @@ public class CustomerController {
     /**
      * Handles Login Request
      *
-     * @param authorization Authorization Details in Base64
+     * @param authorization Authentication Details in Base64
      * @return Customer Details
      * @throws AuthenticationFailedException Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, path = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LoginResponse> loginCustomer(@RequestHeader("authorization") final String authorization) throws AuthenticationFailedException {
         utilityProvider.checkIfAuthorizationFormatIsValid(authorization);
 
-        byte[] decoded = Base64.getDecoder().decode(authorization.split("Basic ")[1]);
+        byte[] decoded = Base64.getDecoder().decode(authorization.split(BASIC_AUTH)[1]);
         String decodedAuth = new String(decoded);
         String[] decodedArray = decodedAuth.split(":");
 
@@ -100,14 +102,14 @@ public class CustomerController {
     /**
      * Handles Logout Request
      *
-     * @param authorization Bearer Access Token
+     * @param authorization Bearer access Token
      * @return UUID of the Customer
      * @throws AuthorizationFailedException Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<LogoutResponse> logoutCustomer(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         CustomerAuthEntity customerAuthEntity = customerService.logout(accessToken);
 
@@ -121,19 +123,19 @@ public class CustomerController {
     /**
      * Handles Customer Details Update Request
      *
-     * @param authorization         Access Token
+     * @param authorization         Bearer Access Token
      * @param updateCustomerRequest Customer Details
      * @return Updated Customer Details
      * @throws AuthorizationFailedException Exception in case of Authorization Fails
      * @throws UpdateCustomerException      Exception in case of Customer Details Update Fails
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.PUT, path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdateCustomerResponse> updateCustomerDetails(@RequestHeader("authorization") final String authorization, @RequestBody(required = false) UpdateCustomerRequest updateCustomerRequest) throws AuthorizationFailedException, UpdateCustomerException {
 
         utilityProvider.checkIfUpdateCustomerRequestIsValid(updateCustomerRequest.getFirstName());
 
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         CustomerEntity toBeUpdatedCustomerEntity = customerService.getCustomer(accessToken);
 
@@ -154,18 +156,18 @@ public class CustomerController {
     /**
      * Handles Password Change Request
      *
-     * @param authorization         Access Token
+     * @param authorization         Bearer Access Token
      * @param updatePasswordRequest Password Request Details
      * @return UUID
      * @throws AuthorizationFailedException Exception in case of Authorization Fails
      * @throws UpdateCustomerException      Exception in case of Customer Details Update Fails
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.PUT, path = "/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PutMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<UpdatePasswordResponse> updateCustomerPassword(@RequestHeader("authorization") final String authorization, @RequestBody(required = false) UpdatePasswordRequest updatePasswordRequest) throws AuthorizationFailedException, UpdateCustomerException {
         utilityProvider.checkIfUpdatePasswordRequestIsValid(updatePasswordRequest.getOldPassword(), updatePasswordRequest.getNewPassword());
 
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         String oldPassword = updatePasswordRequest.getOldPassword();
         String newPassword = updatePasswordRequest.getNewPassword();

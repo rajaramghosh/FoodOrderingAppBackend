@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,10 +40,13 @@ public class OrderDao {
      */
     public List<OrdersEntity> getOrdersByCustomers(CustomerEntity customerEntity) {
         try {
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByCustomers", OrdersEntity.class).setParameter("customer", customerEntity).getResultList();
-            return ordersEntities;
+            return entityManager.createNamedQuery
+                    ("getOrdersByCustomers", OrdersEntity.class)
+                    .setParameter("customer", customerEntity).
+                            getResultList();
+
         } catch (NoResultException nre) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -54,10 +58,10 @@ public class OrderDao {
      */
     public List<OrdersEntity> getOrdersByRestaurant(RestaurantEntity restaurantEntity) {
         try {
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByRestaurant", OrdersEntity.class).setParameter("restaurant", restaurantEntity).getResultList();
-            return ordersEntities;
+            return entityManager.createNamedQuery("getOrdersByRestaurant", OrdersEntity.class).setParameter("restaurant", restaurantEntity).
+                    getResultList();
         } catch (NoResultException nre) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -69,10 +73,11 @@ public class OrderDao {
      */
     public List<OrdersEntity> getOrdersByAddress(AddressEntity addressEntity) {
         try {
-            List<OrdersEntity> ordersEntities = entityManager.createNamedQuery("getOrdersByAddress", OrdersEntity.class).setParameter("address", addressEntity).getResultList();
-            return ordersEntities;
+            return entityManager.createNamedQuery("getOrdersByAddress", OrdersEntity.class).setParameter("address", addressEntity)
+                    .getResultList();
+
         } catch (NoResultException nre) {
-            return null;
+            return new ArrayList<>();
         }
     }
 }

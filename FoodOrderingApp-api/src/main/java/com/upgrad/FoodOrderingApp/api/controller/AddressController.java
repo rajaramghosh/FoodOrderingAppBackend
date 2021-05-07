@@ -4,7 +4,6 @@ import com.upgrad.FoodOrderingApp.api.model.*;
 import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-import com.upgrad.FoodOrderingApp.service.entity.CustomerAddressEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
@@ -20,6 +19,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.upgrad.FoodOrderingApp.api.util.Constants.BEARER_AUTH;
 
 /**
  * Controller to Handle all Address Related Endpoints
@@ -47,9 +48,9 @@ public class AddressController {
      * @throws SaveAddressException         Save Address Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, path = "/address", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(path = "/address", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SaveAddressResponse> saveAddress(@RequestHeader("authorization") final String authorization, @RequestBody(required = false) SaveAddressRequest saveAddressRequest) throws AuthorizationFailedException, AddressNotFoundException, SaveAddressException {
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
@@ -65,7 +66,7 @@ public class AddressController {
 
         AddressEntity savedAddress = addressService.saveAddress(addressEntity, stateEntity);
 
-        CustomerAddressEntity customerAddressEntity = addressService.saveCustomerAddressEntity(customerEntity, savedAddress);
+        addressService.saveCustomerAddressEntity(customerEntity, savedAddress);
 
         SaveAddressResponse saveAddressResponse = new SaveAddressResponse()
                 .id(savedAddress.getUuid())
@@ -83,9 +84,9 @@ public class AddressController {
      * @throws AuthorizationFailedException Authorization Failed Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, path = "/address/customer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/address/customer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<AddressListResponse> getAllSavedAddress(@RequestHeader("authorization") final String authorization) throws AuthorizationFailedException {
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
@@ -122,9 +123,9 @@ public class AddressController {
      * @throws AddressNotFoundException     Address Not Found Exception
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.DELETE, path = "/address/{address_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(path = "/address/{address_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<DeleteAddressResponse> deleteSavedAddress(@RequestHeader("authorization") final String authorization, @PathVariable(value = "address_id") final String addressUuid) throws AuthorizationFailedException, AddressNotFoundException {
-        String accessToken = authorization.split("Bearer ")[1];
+        String accessToken = authorization.split(BEARER_AUTH)[1];
 
         CustomerEntity customerEntity = customerService.getCustomer(accessToken);
 
@@ -148,7 +149,7 @@ public class AddressController {
     /*  The method handles States request.It produces response in StatesListResponse and returns UUID & stateName .If error Return error code and error Message.
      */
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/states", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<StatesListResponse> getAllStates() {
         List<StateEntity> stateEntities = addressService.getAllStates();
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,10 +39,10 @@ public class CustomerAddressDao {
     public List<CustomerAddressEntity> getAllCustomerAddressByCustomer(CustomerEntity customerEntity) {
         try {
             Integer active = 1;
-            List<CustomerAddressEntity> customerAddressEntities = entityManager.createNamedQuery("getAllCustomerAddressByCustomer", CustomerAddressEntity.class).setParameter("customer_entity", customerEntity).setParameter("active", active).getResultList();
-            return customerAddressEntities;
+            return entityManager.createNamedQuery("getAllCustomerAddressByCustomer", CustomerAddressEntity.class).setParameter("customer_entity", customerEntity).setParameter("active", active).getResultList();
+
         } catch (NoResultException nre) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -53,8 +54,8 @@ public class CustomerAddressDao {
      */
     public CustomerAddressEntity getCustomerAddressByAddress(AddressEntity addressEntity) {
         try {
-            CustomerAddressEntity customerAddressEntity = entityManager.createNamedQuery("getCustomerAddressByAddress", CustomerAddressEntity.class).setParameter("address_entity", addressEntity).getSingleResult();
-            return customerAddressEntity;
+            return entityManager.createNamedQuery("getCustomerAddressByAddress", CustomerAddressEntity.class).setParameter("address_entity", addressEntity).getSingleResult();
+
         } catch (NoResultException nre) {
             return null;
         }

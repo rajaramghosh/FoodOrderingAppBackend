@@ -57,8 +57,8 @@ public class AddressDao {
      */
     public AddressEntity getAddressByUuid(String uuid) {
         try {
-            AddressEntity addressEntity = entityManager.createNamedQuery("getAddressByUuid", AddressEntity.class).setParameter("uuid", uuid).getSingleResult();
-            return addressEntity;
+            return entityManager.createNamedQuery("getAddressByUuid", AddressEntity.class).setParameter("uuid", uuid).getSingleResult();
+
         } catch (NoResultException nre) {
             return null;
         }

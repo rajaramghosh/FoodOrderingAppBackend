@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public class CategoryController {
     //Lists call categories in the DB table
     //No API input
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, path = "/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/category", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoriesListResponse> getAllCategories() {
         List<CategoryEntity> categoryEntityList = categoryService.getAllCategoriesOrderedByName();
 
@@ -40,17 +39,16 @@ public class CategoryController {
             categoriesListResponse.addCategoriesItem(categoryListResponse);
         }
 
-        return new ResponseEntity<CategoriesListResponse>(categoriesListResponse, HttpStatus.OK);
+        return new ResponseEntity<>(categoriesListResponse, HttpStatus.OK);
     }
 
     //Lists all items that belong to a particular category
     //Get items by category UUID
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.GET, path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(path = "/category/{category_id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CategoryDetailsResponse> getCategoryById(
             @PathVariable("category_id") final String categoryId)
-            throws CategoryNotFoundException
-    {
+            throws CategoryNotFoundException {
 
         CategoryEntity categoryEntity = categoryService.getCategoryById(categoryId);
 
@@ -69,6 +67,6 @@ public class CategoryController {
             categoryDetailsResponse.addItemListItem(itemList);
         }
 
-        return new ResponseEntity<CategoryDetailsResponse>(categoryDetailsResponse, HttpStatus.OK);
+        return new ResponseEntity<>(categoryDetailsResponse, HttpStatus.OK);
     }
 }

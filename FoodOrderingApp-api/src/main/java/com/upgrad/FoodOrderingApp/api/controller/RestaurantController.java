@@ -31,6 +31,7 @@ import static com.upgrad.FoodOrderingApp.api.util.Constants.BEARER_AUTH;
  * Controller to Handle all Restaurant Related Endpoints
  */
 
+@CrossOrigin
 @RestController
 @RequestMapping("/")
 public class RestaurantController {
